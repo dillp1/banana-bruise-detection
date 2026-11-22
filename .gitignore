@@ -1,0 +1,11 @@
+# macOS
+.DS_Store
+
+# MATLAB autosave and Simulink build output
+*.asv
+*.slxc
+slprj/
+
+# Not part of this project
+lab12/
+finalfinal.slx
