@@ -123,21 +123,30 @@ neighborLabels = yTrain(Idx);
 yPred = mode(neighborLabels, 2);
 
 % Make the decision
+fprintf('Training Predictions\n');
 decisionStr = strings(nTest, 1);
+trueStr     = strings(nTest, 1);
 for i = 1:nTest
+    % Prediction
     if yPred(i) == 0
         decisionStr(i) = "OK";
     else
         decisionStr(i) = "bruised";
     end
 
-    fprintf('%s \t-> predicted: %s | neighbor labels = %s\n', ... 
-        testFiles{i}, decisionStr(i), mat2str(neighborLabels(i,:)));
+    % True label
+    if yTest(i) == 0
+        trueStr(i) = "OK";
+    else
+        trueStr(i) = "bruised";
+    end
+
+    fprintf('%s \t-> predicted: %s | true: %s | neighbor labels = %s\n', testFiles{i}, decisionStr(i), trueStr(i), mat2str(neighborLabels(i,:)));
 end
 
-fprintf('\nTraining');
 % Print training accuracy
-printAccuracy(yPred, yTest, nTest)
+fprintf('\nTraining');
+printAccuracy(yPred, yTest, nTest);
 
 % Compute training accuracy
 % Find k + 1 neighbors (first neighbor will be itself)
@@ -152,9 +161,44 @@ neighborLabelsTrain = yTrain(IdxTrain);
 % Find the majority of labels
 yPredTrain = mode(neighborLabelsTrain, 2);
 
-fprintf('\nTesting');
+% Print training predictions
+decisionStrTrain = strings(nTrain, 1);
+fprintf('\nTraining Predictions\n');
+for i = 1:nTrain
+    if yPredTrain(i) == 0
+        decisionStrTrain(i) = "OK";
+    else
+        decisionStrTrain(i) = "bruised";
+    end
+
+    fprintf('%s \t-> predicted: %s | true: %d | neighbor labels = %s\n', trainFiles{i}, decisionStrTrain(i), yTrain(i), mat2str(neighborLabelsTrain(i,:)));
+end
+
 % Print training accuracy
-printAccuracy(yPredTrain, yTrain, nTrain)
+fprintf('\nTraining');
+printAccuracy(yPredTrain, yTrain, nTrain);
+
+figure();
+hold on;
+
+% Plot Training Data
+scatter(X(yTrain==0,1), X(yTrain==0,2), 80, 'g', 'filled');
+scatter(X(yTrain==1,1), X(yTrain==1,2), 80, 'r', 'filled');
+
+% Plot Testing Data
+scatter(Xtest(yPred==0,1), Xtest(yPred==0,2), 120, ...
+    'o', 'MarkerEdgeColor', 'w', 'LineWidth', 2);
+
+scatter(Xtest(yPred==1,1), Xtest(yPred==1,2), 120, ...
+    'x', 'MarkerEdgeColor', 'w', 'LineWidth', 2);
+
+set(gcf, 'Color', 'black');
+xlabel('Good Pixel Count');
+ylabel('Bad Pixel Count');
+title('Training + Testing Data KNN Plot');
+legend('Train: Good', 'Train: Bruised', 'Test: Predicted Good', 'Test: Predicted Bruised');
+grid on;
+hold off;
 
 
 % === FUNCTIONS ===
@@ -298,6 +342,7 @@ good_pxls = nnz(goodMask);
 bad_pxls = nnz(bruiseMask);
 
 end
+
 
 function printAccuracy(yPred, yTest, nTest)
 
