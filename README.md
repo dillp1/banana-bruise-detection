@@ -2,7 +2,7 @@
 
 A MATLAB computer vision pipeline that classifies bananas as **OK** or **bruised** from a photo,
 using color segmentation to measure healthy and bruised peel and a k-nearest-neighbors classifier
-to make the call. Final project for ECET 369 at Purdue (Nov–Dec 2025).
+to make the call. A three-person team final project for ECET 369 at Purdue (Nov–Dec 2025).
 
 ![Original image, bruise mask and good-peel mask for one banana](example.png)
 
